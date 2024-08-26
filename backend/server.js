@@ -1,20 +1,22 @@
-require("dotenv").config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
-const express = require("express");
-const cors = require("cors");
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Enable CORS for all routes
 app.use(cors());
-//Create a route
-app.listen(PORT, () => {
-  console.log(`server is running on port ${PORT}`);
-});
+app.use(express.json());
 
-//Get Request
-app.get("/", (req, res) => {
-  //request, response (can also use these)
-  res.status(201).send("Hello World! with status"); // the status code is not compulsory
-  // res.send("Hello World! without status");
-});
+// Connect to Database
+mongoose
+  .connect(process.env.MONGO_URI || 'mongodb://localhost/dapurmate')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('Could not connect to MongoDB...', err));
+
+// Define routes
+app.use('/shoppinglist', require('./routes/shoppingList')); // Ensure this matches your directory structure
+
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+
