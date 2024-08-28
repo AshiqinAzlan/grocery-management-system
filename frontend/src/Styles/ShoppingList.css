@@ -80,6 +80,10 @@ h1 {
   margin-bottom: 1rem;
 }
 
+.ShoppingList:hover{
+  cursor: pointer;
+}
+
 .fa-trash {
   margin-left: 0.75rem;
 }
@@ -90,6 +94,7 @@ h1 {
   cursor: pointer;
   
   
+  
 }
 
 /* Style for completed items */
@@ -98,6 +103,12 @@ h1 {
   text-decoration: line-through; /* Strikethrough effect */
   cursor: pointer;
 }
+
+.completed:hover {
+  color: white;
+  cursor: pointer;
+}
+
 
 .quantity-unit {
   display: flex;
