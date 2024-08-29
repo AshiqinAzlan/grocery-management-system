@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
-import { Modal, Button, Form, Table, Alert } from "react-bootstrap";
+import { Modal, Button, Form, Table, Alert, Pagination } from "react-bootstrap";
 import "../../Styles/Inventory.css";
 import moment from "moment";
 
@@ -28,6 +28,10 @@ const Inventory = () => {
   const [formValid, setFormValid] = useState(true);
   const [filterType, setFilterType] = useState(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Number of items per page
+
   const units = [
     "kilogram",
     "Gram",
@@ -40,17 +44,7 @@ const Inventory = () => {
     "Carton",
   ];
 
-  const categories = [
-    "Vegetables",
-    "Dairy",
-    "Fruits",
-    "Meat & Poultry",
-    "Seafood",
-    "Pantry Item",
-    "Bakery",
-    "Beverages",
-    "Snacks",
-  ];
+  const categories = ["Vegetables", "Dairy", "Fruits", "Beverages", "Snacks"];
   const expirationThreshold = 7;
 
   const [editId, setEditId] = useState(null);
@@ -79,7 +73,7 @@ const Inventory = () => {
     return diffDays <= expirationThreshold && diffDays > 0;
   };
 
-  const checkNotifications = (items) => {
+  const checkNotifications = useCallback((items) => {
     const lowStockItems = items.filter((item) =>
       isLowStock(item.quantity, item.optimalStockLevel)
     );
@@ -103,7 +97,7 @@ const Inventory = () => {
     if (expiredItems.length > 0) {
       showNotification("danger", `${expiredItems.length} items have expired!`);
     }
-  };
+  }, []);
 
   const handleClose = () => {
     setShow(false);
@@ -129,7 +123,7 @@ const Inventory = () => {
       console.error("Error fetching items:", err);
       showNotification("error", "Failed to fetch items.");
     }
-  }, []);
+  }, [checkNotifications]);
 
   useEffect(() => {
     fetchItems();
@@ -195,6 +189,12 @@ const Inventory = () => {
     }
     return sortableItems;
   }, [filteredItems, sortConfig]);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedItems.length / itemsPerPage);
 
   const handleSubmit = async () => {
     if (
@@ -274,6 +274,8 @@ const Inventory = () => {
       showNotification("error", "Failed to delete item.");
     }
   };
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="inventory-container">
@@ -491,7 +493,7 @@ const Inventory = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedItems.map((item) => (
+          {currentItems.map((item) => (
             <tr
               key={item._id}
               className={
@@ -521,16 +523,64 @@ const Inventory = () => {
                   <span className="text-info ms-2">(Above Optimal)</span>
                 )}
               </td>
-              <td>{moment(item.expirationDate).format("DD/MM/YYYY")}</td>
+              <td>
+                {moment(item.expirationDate).format("DD/MM/YYYY")}
+                {isExpired(item.expirationDate) && (
+                  <i className="bi bi-exclamation-triangle ms-2 text-danger"></i>
+                )}
+              </td>
               <td>{item.category}</td>
               <td>
-                <Button onClick={() => handleEdit(item)}>Edit</Button>
-                <Button onClick={() => handleDelete(item._id)}>Delete</Button>
+                <Button
+                  className="editBtn"
+                  variant="primary"
+                  onClick={() => handleEdit(item)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  className="deleteBtn"
+                  variant="danger"
+                  onClick={() => handleDelete(item._id)}
+                >
+                  Delete
+                </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+      {/* Pagination Controls */}
+      <div className="d-flex justify-content-end mt-3">
+        <Pagination>
+          <Pagination.First
+            onClick={() => paginate(1)}
+            disabled={currentPage === 1}
+          />
+          <Pagination.Prev
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
+          {[...Array(totalPages)].map((_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === currentPage}
+              onClick={() => paginate(index + 1)}
+              className="page-item"
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          />
+          <Pagination.Last
+            onClick={() => paginate(totalPages)}
+            disabled={currentPage === totalPages}
+          />
+        </Pagination>
+      </div>
     </div>
   );
 };
