@@ -1,20 +1,41 @@
 require("dotenv").config();
-
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
+
+const authRoutes = require("./routes/auth");
+const inventoryRoutes = require("./routes/inventoryRoutes");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for all routes
+// Middleware
+app.use(express.json());
 app.use(cors());
-//Create a route
-app.listen(PORT, () => {
-  console.log(`server is running on port ${PORT}`);
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/inventory", inventoryRoutes);
+
+// Test Route
+app.get("/test", (req, res) => {
+  res.status(200).send("Test route working");
 });
 
-//Get Request
-app.get("/", (req, res) => {
-  //request, response (can also use these)
-  res.status(201).send("Hello World! with status"); // the status code is not compulsory
-  // res.send("Hello World! without status");
+// MongoDB Connection
+mongoose
+  .connect(process.env.DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Failed to connect to MongoDB:", err));
+
+// Start server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Global error handler (optional)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
 });
