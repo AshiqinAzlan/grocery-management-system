@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-// const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/auth");
 const inventoryRoutes = require("./routes/inventoryRoutes");
 
 const app = express();
@@ -13,17 +13,16 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
-// Login and Register Routes
-// app.use("/api/auth", authRoutes);
-
-// Connect inventory routes to Express server
+// Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/inventory", inventoryRoutes);
 
+// Test Route
 app.get("/test", (req, res) => {
   res.status(200).send("Test route working");
 });
 
-// Connect to MongoDB
+// MongoDB Connection
 mongoose
   .connect(process.env.DB_URI, {
     useNewUrlParser: true,
@@ -34,3 +33,9 @@ mongoose
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Global error handler (optional)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});

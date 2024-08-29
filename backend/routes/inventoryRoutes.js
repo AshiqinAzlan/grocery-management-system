@@ -5,6 +5,9 @@ const {
   addItem,
   editItem,
   deleteItem,
+  checkLowStock,
+  checkNearingExpiration,
+  checkExpiredItems,
 } = require("../controllers/inventoryController");
 
 // Define routes and use controller functions
