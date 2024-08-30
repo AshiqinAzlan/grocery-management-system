@@ -3,6 +3,7 @@ import { ShoppingList } from './ShoppingList';
 import { ShopListForm } from './ShopListForm';
 import { EditShopListForm } from './EditShopListForm';
 import axios from 'axios';
+import '../../Styles/ShoppingList.css';
 
 export const ShopListWrapper = () => {
   const [items, setItems] = useState([]);

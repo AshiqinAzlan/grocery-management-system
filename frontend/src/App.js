@@ -1,13 +1,19 @@
-import React from "react";
-import './Styles/ShoppingList.css';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import { ShopListWrapper } from "./Components/ShoppingList/ShopListWrapper";
 
 
 function App() {
+  
+
   return (
-    <div className="App">
-      <ShopListWrapper />
-    </div>
+    <Router>
+        <Routes>
+          <Route path="/" element={<ShopListWrapper />} />
+        </Routes>
+     
+    </Router>
   );
 }
 
