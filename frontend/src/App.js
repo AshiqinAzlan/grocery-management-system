@@ -1,19 +1,26 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import Login from "./Components/Login/Login";
+import LandingPage from "./Components/LandingPage";
+import Login from "./Components/Login/Login";
 import Inventory from "./Components/Inventory/Inventory";
-// import Header from "./Components/LandingPage/Header";
-// import ForgotPassword from "./Components/ForgotPassword";
+import ForgotPassword from "./Components/Login/ForgotPassword";
+import ResetPassword from "./Components/Login/ResetPassword";
+import VerificationSuccess from "./Components/Login/VerificationSuccess";
+import VerifyYourEmail from "./Components/Login/VerifyYourEmail";
 
 function App() {
   return (
     <>
-      {/* <Header /> */}
       <Router>
         <Routes>
-          {/* <Route path="/" element={<Login />} /> */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/verify-email" element={<VerifyYourEmail />} />
+          <Route path="/verify-success" element={<VerificationSuccess />} />
+          <Route path="/verify/:token" element={<VerificationSuccess />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset/:token" element={<ResetPassword />} />
           <Route path="/inventory" element={<Inventory />} />
-          {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
         </Routes>
       </Router>
     </>
