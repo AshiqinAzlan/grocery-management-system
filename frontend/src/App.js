@@ -1,10 +1,11 @@
 
-
 import React from "react";
-import Sidebar from "./Sidebar";
-import MainContent from "./MainContent";
+
+
 import './Styles/Sidebar.css';
 import './Styles/MainContent.css';
+import MainContent from "./Components/MainContent";
+import Sidebar from "./Components/Sidebar";
 
 
 const App = () => {
