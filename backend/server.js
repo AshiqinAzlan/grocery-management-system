@@ -1,3 +1,4 @@
+// server.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -9,9 +10,19 @@ const inventoryRoutes = require("./routes/inventoryRoutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Enable CORS
+const corsOptions = {
+  origin: "http://localhost:3000", // Frontend URL
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
+// Enable Mongoose debug mode
+mongoose.set("debug", true); // Enable detailed logging of all Mongoose operations
+
 // Middleware
 app.use(express.json());
-app.use(cors());
 
 // Routes
 app.use("/api/auth", authRoutes);
