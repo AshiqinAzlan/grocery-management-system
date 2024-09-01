@@ -99,32 +99,39 @@ exports.login = async (req, res) => {
 };
 
 // Verify email endpoint
-// Verify email endpoint
 exports.verifyEmail = async (req, res) => {
   const { token } = req.params; // Get token from URL parameters
 
   try {
+    console.log("Received token:", token); // Log the received token
+
+    // Find user with the verification token and check if the token has not expired
     const user = await User.findOne({
       verificationToken: token,
       verificationTokenExpires: { $gt: Date.now() },
     });
 
     if (!user) {
-      // If no user is found or the token is expired, send an error response
+      console.log("No user found or token expired"); // Log if no user is found
       return res.status(400).json({ message: "Invalid or expired token" });
     }
+
+    console.log("User found:", user); // Log the found user details
 
     // Clear verification token and expiration, mark user as verified
     user.verificationToken = undefined;
     user.verificationTokenExpires = undefined;
     user.isVerified = true; // Mark the user as verified
-    await user.save();
 
-    // Send a response back to the user indicating success
-    res.redirect("/verify-success"); // This should redirect to the frontend route you've set up
+    console.log("Before saving user:", user); // Log before saving
+    await user.save(); // Save the updated user
+    console.log("After saving user:", user); // Log after saving
+
+    // Respond with success
+    return res.status(200).json({ message: "Email verified successfully" });
   } catch (error) {
     console.error("Error verifying email:", error);
-    res.status(500).json({ message: "Error verifying email", error });
+    return res.status(500).json({ message: "Error verifying email", error }); // Ensure proper error response
   }
 };
 
