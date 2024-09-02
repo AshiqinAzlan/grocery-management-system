@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/auth");
 const inventoryRoutes = require("./routes/inventoryRoutes");
+const shoppingListRoutes = require("./routes/shoppingList");
+const recipeRoutes = require("./routes/recipeRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,6 +18,9 @@ app.use(cors());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/inventory", inventoryRoutes);
+app.use("/shoppinglist", shoppingListRoutes);
+app.use("/api/recipe", recipeRoutes);
+
 
 // Test Route
 app.get("/test", (req, res) => {
